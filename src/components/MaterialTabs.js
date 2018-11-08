@@ -22,8 +22,7 @@ type Props = {
   scrollable: boolean,
   textStyle: StyleObj,
   activeTextStyle: StyleObj,
-  topShadow: boolean,
-  bottomShadow: boolean,
+  shadow: boolean,
   items: ContentType[],
   uppercase: boolean,
   onChange: (index: number) => void,
@@ -52,8 +51,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
     scrollable: PropTypes.bool,
     textStyle: Text.propTypes.style,
     activeTextStyle: Text.propTypes.style,
-    topShadow: PropTypes.bool,
-    bottomShadow: PropTypes.bool,
+    shadow: PropTypes.bool,
     items: PropTypes.arrayOf(
       PropTypes.oneOfType([PropTypes.string, PropTypes.element])
     ).isRequired,
@@ -75,8 +73,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
     textStyle: null,
     uppercase: true,
     activeTextStyle: {},
-    topShadow: false,
-    bottomShadow: false,
+    shadow: false,
     keyboardShouldPersistTaps: 'never',
   };
 
@@ -178,7 +175,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
       height: this.props.barHeight,
     };
 
-    if (this.props.topShadow) {
+    if (this.props.shadow) {
       barStyle = Object.assign({}, barStyle, {
         shadowColor: 'rgba(0,0,0, .2)',
         shadowOffset: { height: 4, width: 0 },
