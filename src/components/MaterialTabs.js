@@ -17,10 +17,13 @@ type Props = {
   barHeight: number,
   activeTextColor: string,
   indicatorColor: string,
+  indicatorHeight: number,
   inactiveTextColor: string,
   scrollable: boolean,
   textStyle: StyleObj,
   activeTextStyle: StyleObj,
+  topShadow: boolean,
+  bottomShadow: boolean,
   items: ContentType[],
   uppercase: boolean,
   onChange: (index: number) => void,
@@ -33,7 +36,8 @@ type State = {
   indicatorPosition: Animated.Value,
 };
 
-const getKeyForTab = (item: ContentType) => (typeof item == 'string') ? item : item.key;
+const getKeyForTab = (item: ContentType) =>
+  typeof item == 'string' ? item : item.key;
 
 export default class MaterialTabs extends React.Component<Props, State> {
   static propTypes = {
@@ -43,11 +47,16 @@ export default class MaterialTabs extends React.Component<Props, State> {
     barHeight: PropTypes.number,
     activeTextColor: PropTypes.string,
     indicatorColor: PropTypes.string,
+    indicatorHeight: PropTypes.number,
     inactiveTextColor: PropTypes.string,
     scrollable: PropTypes.bool,
     textStyle: Text.propTypes.style,
     activeTextStyle: Text.propTypes.style,
-    items: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.element])).isRequired,
+    topShadow: PropTypes.bool,
+    bottomShadow: PropTypes.bool,
+    items: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.element])
+    ).isRequired,
     uppercase: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     keyboardShouldPersistTaps: PropTypes.string,
@@ -60,11 +69,14 @@ export default class MaterialTabs extends React.Component<Props, State> {
     barHeight: values.barHeight,
     activeTextColor: '#fff',
     indicatorColor: '#fff',
+    indicatorHeight: 4,
     inactiveTextColor: 'rgba(255, 255, 255, 0.7)',
     scrollable: false,
     textStyle: null,
     uppercase: true,
     activeTextStyle: {},
+    topShadow: false,
+    bottomShadow: false,
     keyboardShouldPersistTaps: 'never',
   };
 
@@ -161,11 +173,26 @@ export default class MaterialTabs extends React.Component<Props, State> {
   }
 
   renderContent() {
+    let barStyle = {
+      backgroundColor: this.props.barColor,
+      height: this.props.barHeight,
+    };
+
+    if (this.props.topShadow) {
+      barStyle = Object.assign({}, barStyle, {
+        shadowColor: 'rgba(0,0,0, .2)',
+        shadowOffset: { height: 4, width: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 6,
+        elevation: 4,
+      });
+    }
+
     return (
-      <Bar
-        innerRef={ref => (this.bar = ref)}
-        barColor={this.props.barColor}
-        barHeight={this.props.barHeight}
+      <View
+        ref={ref => (this.bar = ref)}
+        style={barStyle}
+        zIndex={1000}
         onLayout={event => this.getTabWidth(event.nativeEvent.layout.width)}
       >
         <ScrollView
@@ -179,7 +206,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
             {this.props.items.map((item, idx) => (
               <Tab
                 allowFontScaling={this.props.allowFontScaling}
-                content={item}            
+                content={item}
                 key={getKeyForTab(item)}
                 stretch={!this.props.scrollable}
                 onPress={() => this.props.onChange(idx)}
@@ -205,6 +232,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
 
           <Indicator
             color={this.props.indicatorColor}
+            height={this.props.indicatorHeight}
             value={this.state.indicatorPosition}
             tabWidth={
               !this.props.scrollable
@@ -213,7 +241,7 @@ export default class MaterialTabs extends React.Component<Props, State> {
             }
           />
         </ScrollView>
-      </Bar>
+      </View>
     );
   }
 
